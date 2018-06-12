@@ -37,7 +37,8 @@ def isCollision(obj1Rect, obj2Rect):
 def resetGame():
 	global game_mode, dinasour_list, dy, active_list, score, last_score, max_score
 
-	dinasour_list = []
+	# dinasour_list = []
+	dinasour_list.clear()
 	tmp_x = [10, 110, 210]
 	tmp_y = [-80 * i + 10 for i in range(5)]
 	dinasour_w = 80
@@ -49,7 +50,8 @@ def resetGame():
 							[dinasour_x, dinasour_y, dinasour_w, dinasour_h]))
 	
 	game_mode = 0
-	active_list = dict()
+	# active_list = dict()
+	active_list.clear()
 	dy = 0
 	last_score = score
 	score = 0
