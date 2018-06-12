@@ -46,7 +46,7 @@
 
 需要指定mode為Trian, 可以在第二個參數自訂model name
 
-    python dqn.py -m 'Train' -n 'FirstTty'
+    python dqn.py -m 'Train' -n 'FirstTry'
 
 **電腦玩遊戲**
 
