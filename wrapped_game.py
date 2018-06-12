@@ -24,7 +24,7 @@ canvas = pygame.display.set_mode((canvas_width, canvas_height))
 clock = pygame.time.Clock()
 
 font = pygame.font.Font('font/HanaMinA.ttf', 18)
-bg_img = pygame.image.load('images/volcano.jpg').convert_alpha()
+# bg_img = pygame.image.load('images/volcano.jpg').convert_alpha()
 
 orb_x = 110
 orb_y = canvas_height - 90
@@ -32,12 +32,10 @@ orb = Orb(pygame, canvas, 'orb', [orb_x, orb_y, 80, 80])
 
 class GameState:
 	def __init__(self):
-		self.actions = ['no_op', 'go_left', 'go_right']
 		resetGame()
 
 	def frame_step(self, input_action):
 		global game_mode, dinasour_list, dy, active_list, score, last_score, max_score
-		# print(len(dinasour_list))
 		game_mode = 1
 		pygame.event.pump()
 
