@@ -114,13 +114,6 @@ def trainNetwork(model, target_model, args, round_n):
         print ("Weight load successfully")  
         print('New game start!')  
     else:
-        # try:
-        #     model.load_weights(args['name'] + "_model.h5")
-        #     print('model loaded!')
-        # except:
-        #     make_json(args['name'])
-        #     print('new model!')
-        # target_model.set_weights(model.get_weights())
         OBSERVE = OBSERVATION
         epsilon = INITIAL_EPSILON
 
