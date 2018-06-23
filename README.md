@@ -38,9 +38,34 @@
 ![](images/screenshot3.png)
 ![](images/screenshot4.png)
 
-同樣train了約五萬個steps之後,這次的結果明顯比較好,看到恐龍接近時會合理的閃避,最高分數可以到30幾分
+這次train了五輪(8000 * 5 = 四萬個train steps)之後,這次的結果明顯比較好,看到恐龍接近時會合理的閃避,最高分數可以到30幾分
 
 由於我並沒有訓練很久,可以預期繼續往下訓練的話,能夠得到更好的結果
+
+**Target Network**
+
+後來發現原本的code有一個缺失,就是只有用一個model,而這個model的weights隨時都在改變,導致訓練時的targets很不穩定
+
+現在的DQN普遍都會加上一個target network,讓訓練時的目標能夠穩定
+
+原本計算targets的方式如下(只有一個model)
+
+    Q_sa = model.predict(state_t1)
+    targets[range(BATCH), action_t] = reward_t + GAMMA*np.max(Q_sa, axis=1)*np.invert(terminal)
+
+加入target network後(訓練500次才更新一次target network)
+
+    if t % 500 == 0:
+        target_model.set_weights(model.get_weights())
+        print('Target network update!')
+    Q_sa = target_model.predict(state_t1)
+    targets[range(BATCH), action_t] = reward_t + GAMMA*np.max(Q_sa, axis=1)*np.invert(terminal)
+
+我拿更新後的DQN也train了五輪(參數和原本一樣),得到顯著進步,電腦常常能玩到超過50分甚至能玩到破百的分數!
+
+由此可知,target network的技術在DQN是非常必要的,能明顯穩定及改善訓練結果,讓電腦更快成為遊戲高手
+
+# 跑扣
 
 **DQN模型訓練**
 
