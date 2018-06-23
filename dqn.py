@@ -31,7 +31,7 @@ OBSERVATION = 4000 # timesteps to observe before training
 EXPLORE = 100000. # frames over which to anneal epsilon
 FINAL_EPSILON = 0.0001 # final value of epsilon
 INITIAL_EPSILON = 0.1 # starting value of epsilon
-REPLAY_MEMORY = 50000 # number of previous transitions to remember
+REPLAY_MEMORY = 20000 # number of previous transitions to remember
 BATCH = 32 # size of minibatch
 FRAME_PER_ACTION = 1
 LEARNING_RATE = 1e-5
@@ -81,7 +81,7 @@ def buildmodel():
     print("We finish building the model")
     return model
 
-def trainNetwork(model, args, round_n):
+def trainNetwork(model, target_model, args, round_n):
     # open up a game state to communicate with emulator
     game_state = game.GameState()
 
@@ -114,12 +114,13 @@ def trainNetwork(model, args, round_n):
         print ("Weight load successfully")  
         print('New game start!')  
     else:
-        try:
-            model.load_weights(args['name'] + "_model.h5")
-            print('model loaded!')
-        except:
-            make_json(args['name'])
-            print('new model!')
+        # try:
+        #     model.load_weights(args['name'] + "_model.h5")
+        #     print('model loaded!')
+        # except:
+        #     make_json(args['name'])
+        #     print('new model!')
+        # target_model.set_weights(model.get_weights())
         OBSERVE = OBSERVATION
         epsilon = INITIAL_EPSILON
 
@@ -183,7 +184,11 @@ def trainNetwork(model, args, round_n):
             state_t = np.concatenate(state_t)
             state_t1 = np.concatenate(state_t1)
             targets = model.predict(state_t)
-            Q_sa = model.predict(state_t1)
+            # Q_sa = model.predict(state_t1)
+            if t % 500 == 0:
+                target_model.set_weights(model.get_weights())
+                print('Target network update!')
+            Q_sa = target_model.predict(state_t1)
             targets[range(BATCH), action_t] = reward_t + GAMMA*np.max(Q_sa, axis=1)*np.invert(terminal)
 
             loss += model.train_on_batch(state_t, targets)
@@ -217,8 +222,18 @@ def trainNetwork(model, args, round_n):
 
 def playGame(args):
     model = buildmodel()
+    target_model = buildmodel()
+
+    try:
+        model.load_weights(args['name'] + "_model.h5")
+        print('model loaded!')
+    except:
+        make_json(args['name'])
+        print('new model!')
+
     for i in range(TOTAL_ROUND):
-        trainNetwork(model,args, i+1)
+        target_model.set_weights(model.get_weights())
+        trainNetwork(model, target_model, args, i+1)
 
 def main():
     parser = argparse.ArgumentParser(description='Description of your program')
